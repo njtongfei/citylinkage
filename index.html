@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>angualr城市联动</title>
+	</head>
+
+	<style>
+		.cityBox {
+			font-size: 12px;
+			color: #666;
+		}
+		
+		.cityBox .box div.arrow-down {
+			width: 0px;
+			height: 0px;
+			border-left: 5px solid transparent;
+			border-right: 5px solid transparent;
+			border-top: 5px solid #2f2f2f;
+			font-size: 0px;
+			line-height: 0px;
+			position: absolute;
+			right: 10px;
+			top: 12px;
+			cursor: pointer;
+		}
+		
+		.cityBox .box {
+			border: #dedede 1px solid;
+			height: 30px;
+			width: 100px;
+			border-radius: 5px;
+			float: left;
+			margin-right: 10px;
+			text-align: left;
+			line-height: 30px;
+			text-indent: 15px;
+			position: relative;
+		}
+		
+		.cityBox .box ul {
+			position: absolute;
+			left: 0;
+			top: 30px;
+			border: #dedede 1px solid;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+ 		}
+		
+		.cityBox .box ul li {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		
+		.cityBox .box ul li a {
+			text-decoration: none;
+			color: #666;
+			display: block;
+		}
+		
+		.cityBox .box ul li a:hover {
+			background: #f1f1f1;
+		}
+		
+		.cityBox .disabled {
+			border: 1px solid #DDD;
+			background: #F5F5F5;
+			color: #ACA899;
+		}
+		
+		.cityBox .disabled div.arrow-down {
+			border-top: 5px solid #e2e0e0;
+		}
+	</style>
+
+	<body>
+		<div class="home" ng-controller="mainCtrl">
+			<p>当前选择 ： <span ng-bind="province"></span> <span ng-bind="city"></span> <span ng-bind="area"></span></p>
+			<cityMain province="province" city="city" area="area"></cityMain>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/angular/angular.js" ></script>
+	<script>
+		  
+			angular.element(document).ready(function() {
+				angular.bootstrap(document, ['myapp']);
+			});
+			var app = angular.module('myapp',[]);
+			app.controller('mainCtrl',['$scope', '$http',function($scope,$http){
+ 			}])
+			app.directive('citymain', function($http) {
+				return {
+					restrict: 'EA',
+					templateUrl: './template/city.html',
+					replace: true,
+					scope: {
+						province: '=',
+						city: '=',
+						area: '='
+					},
+					link: function(scope, ele, attrs) {
+						scope.province = '请选择省份';
+						scope.city = '请选择城市';
+						scope.area = '请选择区县';
+						scope.provinceShow = true;
+						scope.IsCitydisabled = true;
+						scope.IsAreadisabled = true;
+						scope.cityShow = true;
+						scope.AreaShow = true;
+						// 初始省份信息
+						$http.get('./data/city.json').success(function(data) {
+								scope.items = data;
+						})
+							// 省份下拉框显示
+						scope.chooesProvinceShow = function() {
+							if(scope.provinceShow) {
+								scope.provinceShow = false;
+							} else {
+								scope.provinceShow = true;
+							}
+						    scope.cityShow = true;
+						    scope.AreaShow = true;
+
+						}
+						// 获取市列表
+						scope.chooesProvince = function(index) {
+								scope.province = scope.items[index].name;
+								scope.provinceShow = false;
+								angular.forEach(scope.items[index].child, function() {
+									if(scope.items[index].child.length == 0) {
+										scope.city = '不限';
+										scope.area = '不限';
+										scope.IsCitydisabled = true;
+										scope.IsAreadisabled = true;
+										return false;
+									} else {
+										scope.cityLists = scope.items[index].child;
+										scope.IsCitydisabled = false;
+
+										scope.AreaShow = true;
+										scope.city = '请选择城市';
+										scope.area = '请选择区县';
+
+									}
+								});
+								scope.city = '请选择城市';
+								scope.area = '请选择区县';
+							}
+						// 市区下拉框显示
+						scope.chooesCityShow = function() {
+								if(scope.cityShow) {
+									scope.cityShow = false;
+								} else {
+									scope.cityShow = true;
+								}
+								scope.AreaShow = true;
+								scope.provinceShow = true;
+							}
+							// 获取区县列表
+						scope.chooesCity = function(index) {
+
+								if(scope.cityLists[index].child.length == 0) {
+									scope.IsAreadisabled = true;
+									scope.AreaShow = true;
+								} else {
+									scope.AreaLists = scope.cityLists[index].child;
+									scope.IsAreadisabled = false;
+
+								}
+								scope.cityShow = false;
+								scope.city = scope.cityLists[index].name;
+								scope.area = '请选择区县';
+							}
+							// 区县下拉框显示
+						scope.chooesAreaShow = function() {
+							if(scope.IsAreadisabled) {
+								return false;
+							}
+							if(scope.AreaShow) {
+ 								scope.AreaShow = false;
+							} else {
+ 								scope.AreaShow = true;
+							}
+							scope.cityShow = true;
+							scope.provinceShow = true;
+						}
+
+						//  区县选择
+						scope.chooesArea = function(index) {
+							scope.area = scope.AreaLists[index].value;
+							scope.AreaShow = false;
+						}
+					}
+				};
+			})
+		 
+	</script>
+
+</html>

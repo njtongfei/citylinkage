@@ -1,0 +1,29 @@
+<div class="cityBox">
+	   <div class="box province" ng-click="chooesProvinceShow()">
+	   	  <span ng-bind="province"></span>
+	   	  <div class="arrow-down" ></div>
+	   	  <ul ng-hide="provinceShow">
+	   	  	  <li ng-repeat="item in items">
+	   	  	  	  <a href="javascript:;" ng-bind="item.name" ng-click="chooesProvince($index)"></a>
+	   	  	  </li>
+	   	  </ul>
+	   </div>
+	   <div class="box city" ng-class="{true: 'disabled', false: ''}[IsCitydisabled]" ng-click="chooesCityShow()">
+	   	   <span ng-bind="city"></span>
+	   	   <div class="arrow-down" ></div>
+	   	   <ul ng-hide="cityShow">
+	   	   	 <li ng-repeat="cityList in cityLists"> 
+	   	  	  	  <a href="javascript:;" ng-bind="cityList.name" ng-click="chooesCity($index)"></a>
+	   	  	  </li>
+	   	   </ul>
+	   </div>
+	   <div class="box area" ng-class="{true: 'disabled', false: ''}[IsAreadisabled]" ng-click="chooesAreaShow()">
+	   	  <span ng-bind="area"></span>
+	   	  <div class="arrow-down" ></div>
+	   	  <ul ng-hide="AreaShow">
+	   	  	  <li ng-repeat="AreaList in AreaLists"> 
+	   	  	  	  <a href="javascript:;" ng-bind="AreaList.value" ng-click="chooesArea($index)"></a>
+	   	  	  </li>
+	   	  </ul>
+	   </div>
+</div> 
